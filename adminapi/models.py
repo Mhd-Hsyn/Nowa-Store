@@ -1,5 +1,6 @@
 from django.db import models
 import uuid
+from django.core.exceptions import ValidationError
 
 
 class BaseModel(models.Model):
@@ -29,6 +30,14 @@ class AdminAuth(BaseModel):
     otp_count = models.PositiveIntegerField(default=0, blank=True, null=True)
     profile = models.ImageField(upload_to='admin/ProfileImage/', default="admin/ProfileImage/dummy.png")
     role = models.CharField(max_length=50, choices=ADMIN_ROLES, default= "Manager")
+
+    def clean(self):
+        if self.role == "SuperAdmin" and AdminAuth.objects.filter(role="SuperAdmin").exclude(id=self.id).exists():
+            raise ValidationError("There can be only one SuperAdmin.")
+
+    def save(self, *args, **kwargs):
+        self.clean()  # Ensure clean is called before saving
+        super(AdminAuth, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.email

@@ -291,7 +291,7 @@ class AdminProfileViewset(ModelViewSet):
             requireFeilds = ["oldpassword", "newpassword"]
             validator = key_validation(True, True, request.data, requireFeilds)
             if validator:
-                return Response(validator, status=200)
+                return Response(validator, status=400)
 
             admin_id = request.auth['id']
             fetchuser = AdminAuth.objects.filter(id=admin_id).first()
@@ -329,10 +329,7 @@ class SuperAdminRole(ModelViewSet):
             required_fields = ["f_name", "l_name", "email", "password"]
             validator = key_validation(True, True, request.data, required_fields)
             if validator:
-                return Response(
-                    {"status": False, "message": "All fields are required"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+                return Response(validator,status=status.HTTP_400_BAD_REQUEST)
             admin_ser = AdminRegisterSerializer(data=request.data)
             if admin_ser.is_valid():
                 admin_ser.save()
@@ -357,4 +354,50 @@ class SuperAdminRole(ModelViewSet):
             return Response(message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+    @action(detail=False, methods=["GET"])
+    def get_manager(self, request):
+        try:
+            fetch_managers= AdminAuth.objects.filter(role="Manager")
+
+            admin_ser = AdminGETProfileSerializer(instance=fetch_managers, many=True)
+            return Response(
+                {"status": True, "data": admin_ser.data},
+                status=status.HTTP_200_OK,
+            )
+
+           
+        except Exception as e:
+            message = {"status": False}
+            message.update(message=str(e)) if settings.DEBUG else message.update(
+                message="Internal server error"
+            )
+            return Response(message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+    @action(detail=False, methods=["DELETE"])
+    def delete_manager(self, request):
+        try:
+            required_fields = ["manager_id"]
+            validator = key_validation(True, True, request.GET, required_fields)
+            if validator:
+                return Response(validator,status=status.HTTP_400_BAD_REQUEST)
+            fetch_managers= AdminAuth.objects.get(id=request.GET.get("manager_id"))
+            fetch_managers.delete()
+
+            return Response(
+                {"status": True, "message": "Manager Deleted Successfully"},
+                status=status.HTTP_200_OK,
+            )
+
+        except ObjectDoesNotExist:
+            return Response(
+                {"status": False, "message": "Manager not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except Exception as e:
+            message = {"status": False}
+            message.update(message=str(e)) if settings.DEBUG else message.update(
+                message="Internal server error"
+            )
+            return Response(message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 # continue 

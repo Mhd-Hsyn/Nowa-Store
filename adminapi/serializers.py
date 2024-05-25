@@ -27,7 +27,7 @@ class AdminRegisterSerializer(serializers.ModelSerializer):
 class AdminGETProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = AdminAuth
-        fields = ['f_name', 'l_name', 'email', 'address', 'phone', 'profile', 'role']
+        fields = ['id', 'f_name', 'l_name', 'email', 'address', 'phone', 'profile', 'role']
 
 
 class AdminUpdateProfileSerializer(serializers.ModelSerializer):
