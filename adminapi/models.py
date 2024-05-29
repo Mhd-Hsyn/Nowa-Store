@@ -50,3 +50,58 @@ class AdminWhitelistToken(BaseModel):
 
 
 
+class ProductCategory(BaseModel):
+    name= models.CharField(max_length=50, unique=True)
+    image= models.ImageField(upload_to="product/product_category/", blank=True, null=True)
+    banner_image= models.ImageField(upload_to="product/banner_image/", blank=True, null=True)
+    banner_text= models.TextField(blank=True, null=True)
+    is_banner=models.BooleanField(default=False)
+    admin_id= models.ForeignKey(AdminAuth, on_delete=models.SET_NULL, blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name = "Product Category"
+        verbose_name_plural = "Product Categories"
+
+
+class Brand(BaseModel):
+    name= models.CharField(max_length=100, unique=True)
+    text= models.TextField(blank=True, null=True)
+    image= models.ImageField(upload_to="product/brand/")
+    admin_id= models.ForeignKey(AdminAuth, on_delete=models.SET_NULL, blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Brand"
+        verbose_name_plural = "Brands"
+
+
+class Product(BaseModel):
+    name= models.CharField(max_length=250, unique= True)
+    brand= models.ForeignKey(Brand, on_delete=models.SET_NULL, related_name="brands_products", blank=True, null=True)
+    stock= models.PositiveIntegerField()
+    sold= models.PositiveIntegerField()
+    is_available= models.BooleanField(default=True)
+    overview= models.TextField(blank=True, null=True)
+    description= models.TextField(blank=True, null=True)
+    specification= models.TextField(blank=True, null=True)
+    price= models.PositiveIntegerField()
+    discounted_price= models.PositiveIntegerField(blank=True, null=True)
+    saving= models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    is_discount= models.BooleanField(default=False)
+    discount_date_start= models.DateTimeField(blank=True, null=True)
+    discount_date_end= models.DateTimeField(blank=True, null=True)
+    delivery_info= models.TextField(blank=True, null=True)
+    admin_id= models.ForeignKey(AdminAuth, on_delete=models.SET_NULL, blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Product"
+        verbose_name_plural = "Products"
+

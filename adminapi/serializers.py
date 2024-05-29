@@ -1,7 +1,10 @@
 from uuid import UUID
 from rest_framework import serializers
 from .models import (
-    AdminAuth
+    AdminAuth,
+    Brand,
+    ProductCategory,
+    Product
 )
 from passlib.hash import django_pbkdf2_sha256 as handler
 
@@ -34,3 +37,47 @@ class AdminUpdateProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = AdminAuth
         fields = ['f_name', 'l_name', 'address', 'phone', 'profile']
+
+
+# CRUD ON BRAND 
+
+class BrandSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Brand
+        fields = '__all__'
+
+
+class AdminSer(serializers.ModelSerializer):
+    class Meta:
+        model = AdminAuth
+        fields = ['id', 'email', 'f_name', 'l_name', 'profile']
+
+class GETBrandSerializer(serializers.ModelSerializer):
+    creator_info= AdminSer(source= "admin_id")
+    class Meta:
+        model = Brand
+        fields = ['id', 'created_at', 'name', 'text', 'image', 'creator_info']
+
+
+
+# CRUD ON Product Category 
+
+class ProductCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductCategory
+        fields = '__all__'
+
+class GETProductCategorySerializer(serializers.ModelSerializer):
+    creator_info= AdminSer(source= "admin_id")
+    class Meta:
+        model = ProductCategory
+        fields = ['id', 'created_at', 'name', 'image', 'creator_info',]
+
+
+# CRUD ON BANNER
+
+class GETBannerSerializer(serializers.ModelSerializer):
+    creator_info= AdminSer(source= "admin_id")
+    class Meta:
+        model = ProductCategory
+        fields = ['id', 'created_at', 'name', 'banner_text', 'banner_image', 'creator_info',]

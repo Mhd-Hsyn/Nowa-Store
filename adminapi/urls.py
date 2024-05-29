@@ -4,7 +4,10 @@ from .views import (
     index,
     UserAuthViewset,
     AdminProfileViewset,
-    SuperAdminRole
+    SuperAdminRole,
+    BrandApiView,
+    # ProductCategoryApiView,
+    # BannerApiView
 )
 
 router = DefaultRouter()
@@ -14,6 +17,9 @@ router.register("superadmin", SuperAdminRole, basename="speradmin")
 
 urlpatterns = [
     path("", index),
+    path("brands/", BrandApiView.as_view()),
+    # path("product-category/", ProductCategoryApiView.as_view()),
+    # path("banner/", BannerApiView.as_view()),
 ]
 
 urlpatterns += router.urls
