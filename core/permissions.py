@@ -2,7 +2,8 @@ from rest_framework import permissions
 from rest_framework.exceptions import APIException
 from rest_framework.exceptions import AuthenticationFailed
 from decouple import config
-from adminapi.models import  AdminAuth, AdminWhitelistToken
+from adminapi.models import  AdminWhitelistToken
+from webapi.models import UserWhitelistToken
 import jwt
 
 
@@ -45,6 +46,31 @@ class AdminPermission(permissions.BasePermission):
             if not whitelist:
                 raise AuthenticationFailed(
                     {"status": False, "message": "Admin Not Authorize"}
+                )
+            request.auth = decode_token
+            return True
+        except AuthenticationFailed as af:
+            raise af
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed({"status": False,"error":"Session Expired !!"})
+        except jwt.DecodeError:
+            raise AuthenticationFailed({"status": False,"error":"Invalid token"})
+        except Exception as e:
+            raise AuthenticationFailed({"status": False,"error":"Need Login", "exception": e})
+
+
+class UserPermission(permissions.BasePermission):
+    def has_permission(self, request, view):
+        try:
+            auth_token = request.META["HTTP_AUTHORIZATION"][7:]
+            decode_token = jwt.decode(auth_token, config('USER_JWT_TOKEN'), "HS256")
+            whitelist = UserWhitelistToken.objects.filter(
+                user =  decode_token['id'],
+                token = auth_token,
+                ).first()
+            if not whitelist:
+                raise AuthenticationFailed(
+                    {"status": False, "message": "User Not Authorize"}
                 )
             request.auth = decode_token
             return True
