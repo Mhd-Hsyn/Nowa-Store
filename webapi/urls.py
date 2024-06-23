@@ -9,6 +9,7 @@ router.register("userprofile", UserProfileViewset, basename="userprofile")
 
 
 urlpatterns = [
+    path("", index),
     
 ]
 

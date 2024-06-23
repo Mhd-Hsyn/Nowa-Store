@@ -1,5 +1,6 @@
 import random
 from django.shortcuts import render
+from django.http import HttpResponse
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import status
@@ -23,8 +24,10 @@ from core.permissions import (
 from .serializers import *
 
 # Create your views here.
-def home(request):
-    return render(request, 'userapi/index.html') 
+
+def index(request):
+    return HttpResponse("<h1>Project Ecommerce Shop</h1>")
+
 
 # Create your views here.
 class UserAuthViewset(ModelViewSet):
