@@ -7,6 +7,11 @@ from rest_framework import status
 from passlib.hash import django_pbkdf2_sha256 as handler
 from django.conf import settings
 from rest_framework.decorators import action
+from adminapi.models import (
+    Brand,
+    ProductCategory,
+    Product
+)
 from core.helper import (
     key_validation,
     exception_handler,
@@ -22,6 +27,7 @@ from core.permissions import (
     UserPermission
 )
 from .serializers import *
+from .pagination import *
 
 # Create your views here.
 
@@ -405,3 +411,50 @@ class UserProfileViewset(ModelViewSet):
     
 
 
+class ProductDetailViewSet(ModelViewSet):
+
+
+    def get_all_brands(self, request):
+        try:
+            all_brands = Brand.objects.all()
+            paginator = BrandPagination()  # Use your custom paginator
+            paginated_brands = paginator.paginate_queryset(all_brands, request)
+            brands_ser = GETBrandSerializer(paginated_brands, many=True)
+            return paginator.get_paginated_response(brands_ser.data)
+        except Exception as e:
+            message = {"status": False}
+            message.update(message=str(e)) if settings.DEBUG else message.update(
+                message="Internal server error"
+            )
+            return Response(message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    
+    def get_product_category(self, request):
+        try:
+            all_brands = ProductCategory.objects.filter(is_banner=False)
+            paginator = ProductCategoryPagination()  # Use your custom paginator
+            paginated_brands = paginator.paginate_queryset(all_brands, request)
+            brands_ser = GETProductCategorySerializer(paginated_brands, many=True)
+            return paginator.get_paginated_response(brands_ser.data)
+        except Exception as e:
+            message = {"status": False}
+            message.update(message=str(e)) if settings.DEBUG else message.update(
+                message="Internal server error"
+            )
+            return Response(message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    
+    def get_product_banner(self, request):
+        try:
+            all_brands = ProductCategory.objects.filter(is_banner=True)
+            paginator = ProductCategoryPagination()  # Use your custom paginator
+            paginated_brands = paginator.paginate_queryset(all_brands, request)
+            brands_ser = GETBannerSerializer(paginated_brands, many=True)
+            return paginator.get_paginated_response(brands_ser.data)
+        except Exception as e:
+            message = {"status": False}
+            message.update(message=str(e)) if settings.DEBUG else message.update(
+                message="Internal server error"
+            )
+            return Response(message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    

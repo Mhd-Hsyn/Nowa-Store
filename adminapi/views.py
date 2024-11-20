@@ -517,235 +517,355 @@ class BrandApiView(APIView):
             return Response(message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-# # CRUD on Product-Category
-# class ProductCategoryApiView(APIView):
-#     permission_classes= [AdminPermission]
+# CRUD on Product-Category
+class ProductCategoryApiView(APIView):
+    permission_classes= [AdminPermission]
 
-#     def post(self, request):
-#         try:
-#             admin_id=  request.auth.get('id')
-#             required_fields= ['name', 'image']
-#             validator= key_validation(True, True, request.data, required_fields)
-#             if validator:
-#                 return Response(validator,status=status.HTTP_400_BAD_REQUEST)
+    def post(self, request):
+        try:
+            admin_id=  request.auth.get('id')
+            required_fields= ['name', 'image']
+            validator= key_validation(True, True, request.data, required_fields)
+            if validator:
+                return Response(validator,status=status.HTTP_400_BAD_REQUEST)
             
-#             data= request.data
-#             data['admin_id']= admin_id
-#             p_cat_ser= ProductCategorySerializer(data= data)
-#             if p_cat_ser.is_valid():
-#                 p_cat_ser.save()
-#                 return Response(
-#                     {"status": True, "message": "Product Category created successfully"},
-#                     status=status.HTTP_201_CREATED,
-#                 )
-#             else:
-#                 error_message = exception_handler(p_cat_ser)
-#                 return Response(
-#                     {"status": False, "message": error_message},
-#                     status=status.HTTP_400_BAD_REQUEST,
-#                 )
+            data= request.data
+            data['admin_id']= admin_id
+            p_cat_ser= ProductCategorySerializer(data= data)
+            if p_cat_ser.is_valid():
+                p_cat_ser.save()
+                return Response(
+                    {"status": True, "message": "Product Category created successfully"},
+                    status=status.HTTP_201_CREATED,
+                )
+            else:
+                error_message = exception_handler(p_cat_ser)
+                return Response(
+                    {"status": False, "message": error_message},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
             
-#         except Exception as e:
-#             message = {"status": False}
-#             message.update(message=str(e)) if settings.DEBUG else message.update(
-#                 message="Internal server error"
-#             )
-#             return Response(message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            message = {"status": False}
+            message.update(message=str(e)) if settings.DEBUG else message.update(
+                message="Internal server error"
+            )
+            return Response(message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
     
-#     def get(self, request):
-#         try:
-#             all_brands = ProductCategory.objects.filter(is_banner=False)
-#             paginator = ProductCategoryPagination()  # Use your custom paginator
-#             paginated_brands = paginator.paginate_queryset(all_brands, request)
-#             brands_ser = GETProductCategorySerializer(paginated_brands, many=True)
-#             return paginator.get_paginated_response(brands_ser.data)
-#         except Exception as e:
-#             message = {"status": False}
-#             message.update(message=str(e)) if settings.DEBUG else message.update(
-#                 message="Internal server error"
-#             )
-#             return Response(message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    def get(self, request):
+        try:
+            all_brands = ProductCategory.objects.filter(is_banner=False)
+            paginator = ProductCategoryPagination()  # Use your custom paginator
+            paginated_brands = paginator.paginate_queryset(all_brands, request)
+            brands_ser = GETProductCategorySerializer(paginated_brands, many=True)
+            return paginator.get_paginated_response(brands_ser.data)
+        except Exception as e:
+            message = {"status": False}
+            message.update(message=str(e)) if settings.DEBUG else message.update(
+                message="Internal server error"
+            )
+            return Response(message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 
-#     def put(self, request):
-#         try:
-#             required_fields= ['id', 'name', 'image']
-#             validator= key_validation(True, True, request.data, required_fields)
-#             if validator:
-#                 return Response(validator,status=status.HTTP_400_BAD_REQUEST)
+    def put(self, request):
+        try:
+            required_fields= ['id', 'name', 'image']
+            validator= key_validation(True, True, request.data, required_fields)
+            if validator:
+                return Response(validator,status=status.HTTP_400_BAD_REQUEST)
             
-#             fetch_p_cate= ProductCategory.objects.filter(id= request.data.get('id')).first()
-#             if not fetch_p_cate:
-#                 return Response(
-#                     {"status": False, "message": "Product Category not exists with this ID"},
-#                     status=status.HTTP_400_BAD_REQUEST,
-#                 )
+            fetch_p_cate= ProductCategory.objects.filter(id= request.data.get('id')).first()
+            if not fetch_p_cate:
+                return Response(
+                    {"status": False, "message": "Product Category not exists with this ID"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
-#             p_cat_ser= ProductCategorySerializer(instance=fetch_p_cate, data= request.data)
-#             if p_cat_ser.is_valid():
-#                 p_cat_ser.save()
-#                 return Response(
-#                     {"status": True, "message": "Product Category Updated successfully"},
-#                     status=status.HTTP_200_OK,
-#                 )
-#             else:
-#                 error_message = exception_handler(p_cat_ser)
-#                 return Response(
-#                     {"status": False, "message": error_message},
-#                     status=status.HTTP_400_BAD_REQUEST,
-#                 )
+            p_cat_ser= ProductCategorySerializer(instance=fetch_p_cate, data= request.data)
+            if p_cat_ser.is_valid():
+                p_cat_ser.save()
+                return Response(
+                    {"status": True, "message": "Product Category Updated successfully"},
+                    status=status.HTTP_200_OK,
+                )
+            else:
+                error_message = exception_handler(p_cat_ser)
+                return Response(
+                    {"status": False, "message": error_message},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
             
-#         except Exception as e:
-#             message = {"status": False}
-#             message.update(message=str(e)) if settings.DEBUG else message.update(
-#                 message="Internal server error"
-#             )
-#             return Response(message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            message = {"status": False}
+            message.update(message=str(e)) if settings.DEBUG else message.update(
+                message="Internal server error"
+            )
+            return Response(message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-#     def delete(self, request):
-#         try:
-#             required_fields= ['id']
-#             validator= key_validation(True, True, request.GET, required_fields)
-#             if validator:
-#                 return Response(validator,status=status.HTTP_400_BAD_REQUEST)
+    def delete(self, request):
+        try:
+            required_fields= ['id']
+            validator= key_validation(True, True, request.GET, required_fields)
+            if validator:
+                return Response(validator,status=status.HTTP_400_BAD_REQUEST)
             
-#             fetch_p_cate= ProductCategory.objects.filter(id= request.GET.get('id')).first()
-#             if not fetch_p_cate:
-#                 return Response(
-#                     {"status": False, "message": "Product Category not exists with this ID"},
-#                     status=status.HTTP_400_BAD_REQUEST,
-#                 )
+            fetch_p_cate= ProductCategory.objects.filter(id= request.GET.get('id')).first()
+            if not fetch_p_cate:
+                return Response(
+                    {"status": False, "message": "Product Category not exists with this ID"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
-#             fetch_p_cate.delete()
-#             return Response(
-#                 {"status": True, "message": "Product Category Deleted successfully"},
-#                 status=status.HTTP_200_OK,
-#             )
+            fetch_p_cate.delete()
+            return Response(
+                {"status": True, "message": "Product Category Deleted successfully"},
+                status=status.HTTP_200_OK,
+            )
            
-#         except Exception as e:
-#             message = {"status": False}
-#             message.update(message=str(e)) if settings.DEBUG else message.update(
-#                 message="Internal server error"
-#             )
-#             return Response(message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            message = {"status": False}
+            message.update(message=str(e)) if settings.DEBUG else message.update(
+                message="Internal server error"
+            )
+            return Response(message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
 
-# # CRUD ON BANNER
-# class BannerApiView(APIView):
-#     permission_classes= [AdminPermission]
+# CRUD ON BANNER
+class BannerApiView(APIView):
+    permission_classes= [AdminPermission]
 
-#     def post(self, request):
-#         try:
-#             admin_id=  request.auth.get('id')
-#             required_fields= ['name', 'banner_text', 'banner_image']
-#             validator= key_validation(True, True, request.data, required_fields)
-#             if validator:
-#                 return Response(validator,status=status.HTTP_400_BAD_REQUEST)
+    def post(self, request):
+        try:
+            admin_id=  request.auth.get('id')
+            required_fields= ['name', 'banner_text', 'banner_image']
+            validator= key_validation(True, True, request.data, required_fields)
+            if validator:
+                return Response(validator,status=status.HTTP_400_BAD_REQUEST)
             
-#             data= request.data
-#             data['admin_id']= admin_id
-#             data['is_banner']= True
-#             p_cat_ser= ProductCategorySerializer(data= data)
-#             if p_cat_ser.is_valid():
-#                 p_cat_ser.save()
-#                 return Response(
-#                     {"status": True, "message": "Banner created successfully"},
-#                     status=status.HTTP_201_CREATED,
-#                 )
-#             else:
-#                 error_message = exception_handler(p_cat_ser)
-#                 return Response(
-#                     {"status": False, "message": error_message},
-#                     status=status.HTTP_400_BAD_REQUEST,
-#                 )
+            data= request.data
+            data['admin_id']= admin_id
+            data['is_banner']= True
+            p_cat_ser= ProductCategorySerializer(data= data)
+            if p_cat_ser.is_valid():
+                p_cat_ser.save()
+                return Response(
+                    {"status": True, "message": "Banner created successfully"},
+                    status=status.HTTP_201_CREATED,
+                )
+            else:
+                error_message = exception_handler(p_cat_ser)
+                return Response(
+                    {"status": False, "message": error_message},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
             
-#         except Exception as e:
-#             message = {"status": False}
-#             message.update(message=str(e)) if settings.DEBUG else message.update(
-#                 message="Internal server error"
-#             )
-#             return Response(message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            message = {"status": False}
+            message.update(message=str(e)) if settings.DEBUG else message.update(
+                message="Internal server error"
+            )
+            return Response(message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
     
-#     def get(self, request):
-#         try:
-#             all_brands = ProductCategory.objects.filter(is_banner=True)
-#             paginator = ProductCategoryPagination()  # Use your custom paginator
-#             paginated_brands = paginator.paginate_queryset(all_brands, request)
-#             brands_ser = GETBannerSerializer(paginated_brands, many=True)
-#             return paginator.get_paginated_response(brands_ser.data)
-#         except Exception as e:
-#             message = {"status": False}
-#             message.update(message=str(e)) if settings.DEBUG else message.update(
-#                 message="Internal server error"
-#             )
-#             return Response(message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    def get(self, request):
+        try:
+            all_brands = ProductCategory.objects.filter(is_banner=True)
+            paginator = ProductCategoryPagination()  # Use your custom paginator
+            paginated_brands = paginator.paginate_queryset(all_brands, request)
+            brands_ser = GETBannerSerializer(paginated_brands, many=True)
+            return paginator.get_paginated_response(brands_ser.data)
+        except Exception as e:
+            message = {"status": False}
+            message.update(message=str(e)) if settings.DEBUG else message.update(
+                message="Internal server error"
+            )
+            return Response(message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 
-#     def put(self, request):
-#         try:
-#             required_fields= ['id', 'name', 'banner_text', 'banner_image']
-#             validator= key_validation(True, True, request.data, required_fields)
-#             if validator:
-#                 return Response(validator,status=status.HTTP_400_BAD_REQUEST)
+    def put(self, request):
+        try:
+            required_fields= ['id', 'name', 'banner_text', 'banner_image']
+            validator= key_validation(True, True, request.data, required_fields)
+            if validator:
+                return Response(validator,status=status.HTTP_400_BAD_REQUEST)
             
-#             fetch_p_cate= ProductCategory.objects.filter(id= request.data.get('id')).first()
-#             if not fetch_p_cate:
-#                 return Response(
-#                     {"status": False, "message": "Banner not exists with this ID"},
-#                     status=status.HTTP_400_BAD_REQUEST,
-#                 )
-#             data= request.data
-#             data['is_banner']= True
-#             p_cat_ser= ProductCategorySerializer(instance=fetch_p_cate, data= request.data)
-#             if p_cat_ser.is_valid():
-#                 p_cat_ser.save()
-#                 return Response(
-#                     {"status": True, "message": "Banner Updated successfully"},
-#                     status=status.HTTP_200_OK,
-#                 )
-#             else:
-#                 error_message = exception_handler(p_cat_ser)
-#                 return Response(
-#                     {"status": False, "message": error_message},
-#                     status=status.HTTP_400_BAD_REQUEST,
-#                 )
+            fetch_p_cate= ProductCategory.objects.filter(id= request.data.get('id')).first()
+            if not fetch_p_cate:
+                return Response(
+                    {"status": False, "message": "Banner not exists with this ID"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            data= request.data
+            data['is_banner']= True
+            p_cat_ser= ProductCategorySerializer(instance=fetch_p_cate, data= request.data)
+            if p_cat_ser.is_valid():
+                p_cat_ser.save()
+                return Response(
+                    {"status": True, "message": "Banner Updated successfully"},
+                    status=status.HTTP_200_OK,
+                )
+            else:
+                error_message = exception_handler(p_cat_ser)
+                return Response(
+                    {"status": False, "message": error_message},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
             
-#         except Exception as e:
-#             message = {"status": False}
-#             message.update(message=str(e)) if settings.DEBUG else message.update(
-#                 message="Internal server error"
-#             )
-#             return Response(message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            message = {"status": False}
+            message.update(message=str(e)) if settings.DEBUG else message.update(
+                message="Internal server error"
+            )
+            return Response(message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-#     def delete(self, request):
-#         try:
-#             required_fields= ['id']
-#             validator= key_validation(True, True, request.GET, required_fields)
-#             if validator:
-#                 return Response(validator,status=status.HTTP_400_BAD_REQUEST)
+    def delete(self, request):
+        try:
+            required_fields= ['id']
+            validator= key_validation(True, True, request.GET, required_fields)
+            if validator:
+                return Response(validator,status=status.HTTP_400_BAD_REQUEST)
             
-#             fetch_p_cate= ProductCategory.objects.filter(id= request.GET.get('id')).first()
-#             if not fetch_p_cate:
-#                 return Response(
-#                     {"status": False, "message": "Banner not exists with this ID"},
-#                     status=status.HTTP_400_BAD_REQUEST,
-#                 )
+            fetch_p_cate= ProductCategory.objects.filter(id= request.GET.get('id')).first()
+            if not fetch_p_cate:
+                return Response(
+                    {"status": False, "message": "Banner not exists with this ID"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
-#             fetch_p_cate.delete()
-#             return Response(
-#                 {"status": True, "message": "Banner Deleted successfully"},
-#                 status=status.HTTP_200_OK,
-#             )
+            fetch_p_cate.delete()
+            return Response(
+                {"status": True, "message": "Banner Deleted successfully"},
+                status=status.HTTP_200_OK,
+            )
            
-#         except Exception as e:
-#             message = {"status": False}
-#             message.update(message=str(e)) if settings.DEBUG else message.update(
-#                 message="Internal server error"
-#             )
-#             return Response(message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            message = {"status": False}
+            message.update(message=str(e)) if settings.DEBUG else message.update(
+                message="Internal server error"
+            )
+            return Response(message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+
+
+
+class ProductApiView(ModelViewSet):
+    permission_classes= [AdminPermission]
+
+    @action(detail= False, methods=['POST'])
+    def add_product(self, request):
+        # try:
+            admin_id=  request.auth.get('id')
+            print(admin_id)
+            data= request.data.copy()
+            # data['admin_id']= admin_id
+
+            print("data ______ ", data)
+            product_ser= AddProductSerializer(data= data, context={'admin_id': admin_id})
+            if product_ser.is_valid():
+                product_ser.save()
+                return Response(
+                    {"status": True, "message": "Product created successfully"},
+                    status=status.HTTP_201_CREATED,
+                )
+            else:
+                error_message = exception_handler(product_ser)
+                return Response(
+                    {"status": False, "message": error_message},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+        # except Exception as e:
+        #     message = {"status": False}
+        #     message.update(message=str(e)) if settings.DEBUG else message.update(
+        #         message="Internal server error"
+        #     )
+        #     return Response(message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    
+    # def get(self, request):
+    #     try:
+    #         all_brands = ProductCategory.objects.filter(is_banner=True)
+    #         paginator = ProductCategoryPagination()  # Use your custom paginator
+    #         paginated_brands = paginator.paginate_queryset(all_brands, request)
+    #         brands_ser = GETBannerSerializer(paginated_brands, many=True)
+    #         return paginator.get_paginated_response(brands_ser.data)
+    #     except Exception as e:
+    #         message = {"status": False}
+    #         message.update(message=str(e)) if settings.DEBUG else message.update(
+    #             message="Internal server error"
+    #         )
+    #         return Response(message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+
+    # def put(self, request):
+    #     try:
+    #         required_fields= ['id', 'name', 'banner_text', 'banner_image']
+    #         validator= key_validation(True, True, request.data, required_fields)
+    #         if validator:
+    #             return Response(validator,status=status.HTTP_400_BAD_REQUEST)
+            
+    #         fetch_p_cate= ProductCategory.objects.filter(id= request.data.get('id')).first()
+    #         if not fetch_p_cate:
+    #             return Response(
+    #                 {"status": False, "message": "Banner not exists with this ID"},
+    #                 status=status.HTTP_400_BAD_REQUEST,
+    #             )
+    #         data= request.data
+    #         data['is_banner']= True
+    #         p_cat_ser= ProductCategorySerializer(instance=fetch_p_cate, data= request.data)
+    #         if p_cat_ser.is_valid():
+    #             p_cat_ser.save()
+    #             return Response(
+    #                 {"status": True, "message": "Banner Updated successfully"},
+    #                 status=status.HTTP_200_OK,
+    #             )
+    #         else:
+    #             error_message = exception_handler(p_cat_ser)
+    #             return Response(
+    #                 {"status": False, "message": error_message},
+    #                 status=status.HTTP_400_BAD_REQUEST,
+    #             )
+            
+    #     except Exception as e:
+    #         message = {"status": False}
+    #         message.update(message=str(e)) if settings.DEBUG else message.update(
+    #             message="Internal server error"
+    #         )
+    #         return Response(message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+    # def delete(self, request):
+    #     try:
+    #         required_fields= ['id']
+    #         validator= key_validation(True, True, request.GET, required_fields)
+    #         if validator:
+    #             return Response(validator,status=status.HTTP_400_BAD_REQUEST)
+            
+    #         fetch_p_cate= ProductCategory.objects.filter(id= request.GET.get('id')).first()
+    #         if not fetch_p_cate:
+    #             return Response(
+    #                 {"status": False, "message": "Banner not exists with this ID"},
+    #                 status=status.HTTP_400_BAD_REQUEST,
+    #             )
+
+    #         fetch_p_cate.delete()
+    #         return Response(
+    #             {"status": True, "message": "Banner Deleted successfully"},
+    #             status=status.HTTP_200_OK,
+    #         )
+           
+    #     except Exception as e:
+    #         message = {"status": False}
+    #         message.update(message=str(e)) if settings.DEBUG else message.update(
+    #             message="Internal server error"
+    #         )
+    #         return Response(message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+

@@ -6,20 +6,22 @@ from .views import (
     AdminProfileViewset,
     SuperAdminRole,
     BrandApiView,
-    # ProductCategoryApiView,
-    # BannerApiView
+    ProductCategoryApiView,
+    BannerApiView,
+    ProductApiView
 )
 
 router = DefaultRouter()
 router.register("auth", UserAuthViewset, basename="auth")
 router.register("profile", AdminProfileViewset, basename="profile")
 router.register("superadmin", SuperAdminRole, basename="speradmin")
+router.register("product", ProductApiView, basename="product")
 
 urlpatterns = [
     path("", index),
     path("brands/", BrandApiView.as_view()),
-    # path("product-category/", ProductCategoryApiView.as_view()),
-    # path("banner/", BannerApiView.as_view()),
+    path("product-category/", ProductCategoryApiView.as_view()),
+    path("banner/", BannerApiView.as_view()),
 ]
 
 urlpatterns += router.urls

@@ -83,15 +83,15 @@ class Brand(BaseModel):
 class Product(BaseModel):
     name= models.CharField(max_length=250, unique= True)
     brand= models.ForeignKey(Brand, on_delete=models.SET_NULL, related_name="brands_products", blank=True, null=True)
+    category= models.ForeignKey(ProductCategory, on_delete=models.SET_NULL, related_name="category_products", blank=True, null=True)
     stock= models.PositiveIntegerField()
-    sold= models.PositiveIntegerField()
+    sold= models.PositiveIntegerField(default= 0)
     is_available= models.BooleanField(default=True)
     overview= models.TextField(blank=True, null=True)
     description= models.TextField(blank=True, null=True)
     specification= models.TextField(blank=True, null=True)
     price= models.PositiveIntegerField()
     discounted_price= models.PositiveIntegerField(blank=True, null=True)
-    saving= models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     is_discount= models.BooleanField(default=False)
     discount_date_start= models.DateTimeField(blank=True, null=True)
     discount_date_end= models.DateTimeField(blank=True, null=True)
@@ -104,4 +104,10 @@ class Product(BaseModel):
     class Meta:
         verbose_name = "Product"
         verbose_name_plural = "Products"
+
+
+class ProductImage(models.Model):
+    product= models.ForeignKey(Product, on_delete=models.CASCADE)
+    image= models.ImageField(upload_to="product/product_images/")
+
 

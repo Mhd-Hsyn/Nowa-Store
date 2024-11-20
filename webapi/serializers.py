@@ -8,6 +8,12 @@ from core.helper import (
     check_emailforamt,
     password_length_validator
 )
+from adminapi.models import (
+    Brand,
+    ProductCategory,
+    Product
+)
+
 
 class UserSignUpSerializer(serializers.ModelSerializer):
     """
@@ -50,3 +56,21 @@ class UserUpdateProfileSerializer(serializers.ModelSerializer):
         model = User
         fields = ['fname', 'lname', 'address', 'contact', 'profile']
 
+
+
+# Product
+class GETBrandSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Brand
+        fields = ['id', 'created_at', 'name', 'text', 'image']
+
+
+class GETProductCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductCategory
+        fields = ['id', 'created_at', 'name', 'image']
+
+class GETBannerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductCategory
+        fields = ['id', 'created_at', 'name', 'banner_text', 'banner_image']
